@@ -2,32 +2,42 @@
 #define CLASS_UNIT_H
 
 
+#include "TargetLanguage.h"
 #include "Unit.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-class ClassUnit : public Unit
-{
-public:
-    enum AccessModifier {
-        PUBLIC,
-        PROTECTED,
-        PRIVATE
-    };
-    static const std::vector< std::string > ACCESS_MODIFIERS;
+namespace generator {
 
-//public:
-    explicit ClassUnit( const std::string& name );
+class ClassUnit : public Unit {
+public:
+    explicit ClassUnit( std::string name, TargetLanguage language, Unit::Flags flags = 0 );
+
     void add( const std::shared_ptr< Unit >& unit, Flags flags ) override;
     std::string compile( unsigned int level = 0 ) const override;
 
 private:
-    std::string m_name;
-    using Fields = std::vector< std::shared_ptr< Unit > >;
-    std::vector< Fields > m_fields;
+    // вспомогательные структура для член-данных и член-функций через Unit
+    struct Member {
+        std::shared_ptr< Unit > unit;
+        Flags accessFlags;
+    };
+
+    std::string m_name; // название
+    TargetLanguage m_language;  // язык
+    Unit::Flags m_flags;    // флаги
+    std::vector< Member > m_members;    // член-данные и член-функции
 };
+// по-сути будет построено дерево из вложенных друг в друга сущностей
+// classUnit
+//  + MethodUnit
+//  +   + StatementUnit
+//  + MethodUnit
+//  +   + StatementUnit
+//  ...
+}
 
 
 #endif // CLASS_UNIT_H

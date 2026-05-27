@@ -1,7 +1,8 @@
 #include <iostream>
 #include <memory>
+#include <string>
 
-#include "CppUnitFactory.h"
+#include "CodeGeneration.h"
 
 std::string generateProgram( const IUnitFactory& factory )
 {
@@ -9,6 +10,7 @@ std::string generateProgram( const IUnitFactory& factory )
     myClass->add(factory.createMethodUnit( "testFunc1", "void", 0 ), ClassUnit::PUBLIC);
     myClass->add(factory.createMethodUnit( "testFunc2", "void", MethodUnit::STATIC ), ClassUnit::PRIVATE);
     myClass->add(factory.createMethodUnit( "testFunc3", "void", MethodUnit::VIRTUAL | MethodUnit::CONST ), ClassUnit::PUBLIC);
+
 
     auto method = factory.createMethodUnit( "testFunc4", "void", MethodUnit::STATIC );
     method->add( factory.createPrintOperatorUnit( R"(Hello, world!\n)" ) );
@@ -20,6 +22,15 @@ std::string generateProgram( const IUnitFactory& factory )
 
 int main(int argc, char *argv[])
 {
+    try {
+        generator::TargetLanguage language = generator::TargetLanguage::CSharp;
+
+        const auto factory = generator::createFactory( language );
+        std::cout << generator::buildProgram( *factory ) << std::endl;
+    } catch( const std::exception& error ) {
+        std::cerr << error.what() << std::endl;
+        return 1;
+    }
     CppUnitFactory factory;
     std::cout << generateProgram( factory ) << std::endl;
     return 0;

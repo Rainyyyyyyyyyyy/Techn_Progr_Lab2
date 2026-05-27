@@ -9,11 +9,13 @@
 class Unit {
 
 public:
+    // флаги
+    // using для повышения читабельности и сокращения объёма
     using Flags = unsigned int;
 
 
     virtual ~Unit() = default;
-    virtual void add( const std::shared_ptr< Unit >& , Flags ) {
+    virtual void add( const std::shared_ptr< Unit >& , Flags = 0 ) {
         throw std::runtime_error( "Not supported" );
     }
     virtual std::string compile( unsigned int level = 0 ) const = 0;
