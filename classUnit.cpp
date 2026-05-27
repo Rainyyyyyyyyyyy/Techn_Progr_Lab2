@@ -1,48 +1,72 @@
-#include "Unit.h"
-#include <memory>
-#include <vector>
+#include "ClassUnit.h"
 
-class ClassUnit : public Unit
+#include "CodeGenerationUtils.h"
+#include "Modifiers.h"
+
+#include <array>
+#include <utility>
+
+namespace generator {
+
+ClassUnit::ClassUnit( std::string name, TargetLanguage language, Unit::Flags flags )
+    : m_name( std::move( name ) ), m_language( language ), m_flags( flags ) { }
+
+void ClassUnit::add( const std::shared_ptr< Unit >& unit, Flags flags )
 {
-public:
-    enum AccessModifier {
-        PUBLIC,
-        PROTECTED,
-        PRIVATE
-    };
-    static const std::vector< std::string > ACCESS_MODIFIERS;
-public:
-    explicit ClassUnit( const std::string& name ) : m_name( name ) {
-        m_fields.resize( ACCESS_MODIFIERS.size() );
+    m_members.push_back( { unit, flags } );
+}
+
+std::string ClassUnit::compile( unsigned int level ) const
+{
+    std::string result = generateShift( level );
+
+    const std::string classAccess = renderAccessModifier( m_language, m_flags, true );
+    if( !classAccess.empty() ) {
+        result += classAccess + ' ';
     }
-    void add( const std::shared_ptr< Unit >& unit, Flags flags ) {
-        int accessModifier = PRIVATE;
-        if( flags < ACCESS_MODIFIERS.size() ) {
-            accessModifier = flags;
-        }
-        m_fields[ accessModifier ].push_back( unit );
+
+    const std::string classModifiers = renderClassModifiers( m_language, m_flags );
+    if( !classModifiers.empty() ) {
+        result += classModifiers + ' ';
     }
-    std::string compile( unsigned int level = 0 ) const
-    {
-        std::string result = generateShift( level ) + "class " + m_name + " {\n";
-        for( size_t i = 0; i < ACCESS_MODIFIERS.size(); ++i ) {
-            if( m_fields[ i ].empty() ) {
+
+    result += "class " + m_name + " {\n";
+
+    if( m_language == TargetLanguage::Cpp ) {
+        static const std::array< std::pair< Flags, const char* >, 3 > ACCESS_ORDER = {{
+            { Modifiers::PUBLIC, "public" },
+            { Modifiers::PROTECTED, "protected" },
+            { Modifiers::PRIVATE, "private" }
+        }};
+
+        for( const auto& access : ACCESS_ORDER ) {
+            bool hasMembers = false;
+            for( const auto& member : m_members ) {
+                if( member.accessFlags == access.first ) {
+                    hasMembers = true;
+                    break;
+                }
+            }
+            if( !hasMembers ) {
                 continue;
             }
-            result += ACCESS_MODIFIERS[ i ] + ":\n";
-            for( const auto& f : m_fields[ i ] ) {
-                result += f->compile( level + 1 );
+
+            result += generateShift( level + 1 ) + access.second + ":\n";
+            for( const auto& member : m_members ) {
+                if( member.accessFlags == access.first ) {
+                    result += member.unit->compile( level + 2 );
+                }
             }
             result += "\n";
         }
-        result += generateShift( level ) + "};\n";
-        return result;
+    } else {
+        for( const auto& member : m_members ) {
+            result += member.unit->compile( level + 1 );
+        }
     }
-private:
-    std::string m_name;
-    using Fields = std::vector< std::shared_ptr< Unit > >;
-    std::vector< Fields > m_fields;
-};
 
+    result += generateShift( level ) + "}\n";
+    return result;
+}
 
-const std::vector< std::string > ClassUnit::ACCESS_MODIFIERS = { "public", "protected", "private" };
+} // namespace generator

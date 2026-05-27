@@ -1,41 +1,61 @@
-#include "Unit.h"
-#include <vector>
+#include "MethodUnit.h"
 
-class MethodUnit : public Unit {
-public:
-    enum Modifier {
-        STATIC = 1,
-        CONST = 1 << 1,
-        VIRTUAL = 1 << 2
-    };
-public:
-    MethodUnit( const std::string& name, const std::string& returnType, Flags flags ) :
-        m_name( name ), m_returnType( returnType ), m_flags( flags ) { }
-    void add( const std::shared_ptr< Unit >& unit, Flags /* flags */ = 0 ) {
-        m_body.push_back( unit );
+#include "CodeGenerationUtils.h"
+#include "Modifiers.h"
+
+#include <utility>
+
+namespace generator {
+
+MethodUnit::MethodUnit( std::string name,
+                        std::string returnType,
+                        TargetLanguage language,
+                        Unit::Flags flags,
+                        std::string parameters )
+    : m_name( std::move( name ) ),
+      m_returnType( std::move( returnType ) ),
+      m_language( language ),
+      m_flags( flags ),
+      m_parameters( std::move( parameters ) )
+{ }
+
+void MethodUnit::add( const std::shared_ptr< Unit >& unit, Flags /* flags */ )
+{
+    m_body.push_back( unit );
+}
+
+std::string MethodUnit::compile( unsigned int level ) const
+{
+    std::string result = generateShift( level );
+
+    const std::string accessModifier = renderAccessModifier( m_language, m_flags, false );
+    if( !accessModifier.empty() ) {
+        result += accessModifier + ' ';
     }
-    std::string compile( unsigned int level = 0 ) const {
-        std::string result = generateShift( level );
-        if( m_flags & STATIC ) {
-            result += "static ";
-        } else if( m_flags & VIRTUAL ) {
-            result += "virtual ";
-        }
-        result += m_returnType + " ";
-        result += m_name + "()";
-        if( m_flags & CONST ) {
-            result += " const";
-        }
-        result += " {\n";
-        for( const auto& b : m_body ) {
-            result += b->compile( level + 1 );
-        }
-        result += generateShift( level ) + "}\n";
+
+    const std::string methodModifiers = renderMethodModifiers( m_language, m_flags );
+    if( !methodModifiers.empty() ) {
+        result += methodModifiers + ' ';
+    }
+
+    result += m_returnType + ' ' + m_name + '(' + m_parameters + ')';
+
+    if( m_language == TargetLanguage::Cpp && hasFlag( m_flags, Modifiers::CONST ) ) {
+        result += " const";
+    }
+
+    const bool isAbstract = hasFlag( m_flags, Modifiers::ABSTRACT ) && m_language != TargetLanguage::Cpp;
+    if( isAbstract ) {
+        result += ";\n";
         return result;
     }
-private:
-    std::string m_name;
-    std::string m_returnType;
-    Flags m_flags;
-    std::vector< std::shared_ptr< Unit > > m_body;
-};
+
+    result += " {\n";
+    for( const auto& bodyUnit : m_body ) {
+        result += bodyUnit->compile( level + 1 );
+    }
+    result += generateShift( level ) + "}\n";
+    return result;
+}
+
+} // namespace generator
