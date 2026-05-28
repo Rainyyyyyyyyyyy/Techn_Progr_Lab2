@@ -4,6 +4,8 @@
 
 #include "CodeGeneration.h"
 
+
+/*
 std::string generateProgram( const IUnitFactory& factory )
 {
     auto myClass = factory.createClassUnit( "MyClass" );
@@ -19,7 +21,7 @@ std::string generateProgram( const IUnitFactory& factory )
 }
 
 
-
+*/
 int main(int argc, char *argv[])
 {
     try {
@@ -31,7 +33,9 @@ int main(int argc, char *argv[])
         std::cerr << error.what() << std::endl;
         return 1;
     }
-    CppUnitFactory factory;
-    std::cout << generateProgram( factory ) << std::endl;
+
+
+    //CppUnitFactory factory;
+    //std::cout << generateProgram( factory ) << std::endl;
     return 0;
 }
