@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-namespace generator {
 
 bool hasFlag( Unit::Flags flags, Unit::Flags flag )
 {
@@ -166,4 +165,3 @@ std::string renderPrintStatement( TargetLanguage language, const std::string& te
     return std::string();
 }
 
-} // namespace generator

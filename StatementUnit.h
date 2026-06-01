@@ -6,7 +6,6 @@
 
 #include <string>
 
-namespace generator {
 
 class StatementUnit : public Unit {
 public:
@@ -18,7 +17,6 @@ private:
     std::string m_text;
 };
 
-}
 
 
 #endif // STATEMENT_UNIT_H

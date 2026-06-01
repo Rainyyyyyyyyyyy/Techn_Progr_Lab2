@@ -9,7 +9,6 @@
 #include <memory>
 #include <string>
 
-namespace generator {
 
 class ICodeFactory {
 public:
@@ -40,7 +39,6 @@ std::string buildProgram( const ICodeFactory& factory );
 std::unique_ptr< ICodeFactory > createFactory( TargetLanguage language );
 TargetLanguage parseLanguage( const std::string& languageName );
 
-} // namespace generator
 
 
 #endif // CODE_GENERATION_H

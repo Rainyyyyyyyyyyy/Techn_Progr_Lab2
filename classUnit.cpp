@@ -6,7 +6,6 @@
 #include <array>
 #include <utility>
 
-namespace generator {
 
 ClassUnit::ClassUnit( std::string name, TargetLanguage language, Unit::Flags flags )
     : m_name( std::move( name ) ), m_language( language ), m_flags( flags ) { }
@@ -69,4 +68,3 @@ std::string ClassUnit::compile( unsigned int level ) const
     return result;
 }
 
-} // namespace generator

@@ -8,7 +8,6 @@
 #include <string>
 #include <vector>
 
-namespace generator {
 
 // проверить флаги
 bool hasFlag( Unit::Flags flags, Unit::Flags flag );
@@ -31,7 +30,6 @@ std::string renderMethodModifiers( TargetLanguage language, Unit::Flags flags );
 // получить оператор вывода из языка language
 std::string renderPrintStatement( TargetLanguage language, const std::string& text );
 
-}
 
 
 #endif // CODE_GENERATION_UTILS_H

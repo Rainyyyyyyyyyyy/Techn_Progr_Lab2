@@ -9,8 +9,6 @@
 #include <string>
 #include <vector>
 
-namespace generator {
-
 class ClassUnit : public Unit {
 public:
     explicit ClassUnit( std::string name, TargetLanguage language, Unit::Flags flags = 0 );
@@ -37,7 +35,7 @@ private:
 //  + MethodUnit
 //  +   + StatementUnit
 //  ...
-}
+
 
 
 #endif // CLASS_UNIT_H
