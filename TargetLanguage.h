@@ -2,7 +2,6 @@
 #define TARGET_LANGUAGE_H
 
 
-namespace generator {
 
 enum class TargetLanguage {
     Cpp,
@@ -10,7 +9,6 @@ enum class TargetLanguage {
     Java
 };
 
-}
 
 
 #endif // TARGET_LANGUAGE_H

@@ -4,7 +4,7 @@
 
 #include "Unit.h"
 
-namespace generator {
+
 namespace Modifiers {
 constexpr Unit::Flags PUBLIC = 1u << 0;
 constexpr Unit::Flags PROTECTED = 1u << 1;
@@ -21,7 +21,7 @@ constexpr Unit::Flags OVERRIDE = 1u << 11;
 constexpr Unit::Flags CONST = 1u << 12;
 constexpr Unit::Flags PARTIAL = 1u << 13;
 }
-}
+
 
 
 #endif // MODIFIERS_H

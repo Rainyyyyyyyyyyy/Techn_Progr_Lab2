@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-namespace generator {
 
 bool hasFlag( Unit::Flags flags, Unit::Flags flag )
 {
@@ -144,9 +143,9 @@ std::string renderMethodModifiers( TargetLanguage language, Unit::Flags flags )
         if( hasFlag( flags, Modifiers::ABSTRACT ) ) {
             modifiers.push_back( "abstract" );
         }
-        if( hasFlag( flags, Modifiers::SYNCHRONIZED ) ) {
-            modifiers.push_back( "synchronized" );
-        }
+        //if( hasFlag( flags, Modifiers::SYNCHRONIZED ) ) {
+        //    modifiers.push_back( "synchronized" );
+        //}
         break;
     }
     return joinModifiers( modifiers );
@@ -166,4 +165,3 @@ std::string renderPrintStatement( TargetLanguage language, const std::string& te
     return std::string();
 }
 
-} // namespace generator

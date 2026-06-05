@@ -7,7 +7,6 @@
 
 #include <string>
 
-namespace generator {
 
 class PrintOperatorUnit : public Unit {
 public:
@@ -21,7 +20,6 @@ private:
     TargetLanguage m_language; // язык
 };
 
-}
 
 
 #endif // PRINT_OPERATOR_UNIT_H

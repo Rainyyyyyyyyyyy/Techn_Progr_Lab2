@@ -5,7 +5,6 @@
 
 #include <utility>
 
-namespace generator {
 
 MethodUnit::MethodUnit( std::string name,
                         std::string returnType,
@@ -58,4 +57,4 @@ std::string MethodUnit::compile( unsigned int level ) const
     return result;
 }
 
-} // namespace generator
+

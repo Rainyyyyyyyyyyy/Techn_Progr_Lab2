@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 
-namespace generator {
 
 // сущность для конструкции - метод класса
 class MethodUnit : public Unit {
@@ -37,7 +36,6 @@ private:
     std::vector< std::shared_ptr< Unit > > m_body; // тело с конструкциями (например, оператор вывода)
 };
 
-}
 
 
 #endif // METHOD_UNIT_H
