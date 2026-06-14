@@ -9,6 +9,7 @@ CONFIG += c++17 cmdline
 SOURCES += \
         CodeGeneration.cpp \
         CodeGenerationUtils.cpp \
+        FieldUnit.cpp \
         MethodUnit.cpp \
         PrintOperatorUnit.cpp \
         StatementUnit.cpp \
@@ -25,6 +26,7 @@ HEADERS += \
         ClassUnit.h \
         CodeGeneration.h \
         CodeGenerationUtils.h \
+        FieldUnit.h \
         MethodUnit.h \
         Modifiers.h \
         PrintOperatorUnit.h \

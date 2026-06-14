@@ -15,14 +15,10 @@ class MethodUnit : public Unit {
 public:
 
     // конструктор
-    MethodUnit( std::string name,
-                std::string returnType,
-                TargetLanguage language,
-                Unit::Flags flags,
-                std::string parameters = std::string() );
+    MethodUnit( std::string name, std::string returnType, TargetLanguage language, Unit::Flags flags, std::string parameters = std::string() );
 
     // добавить конструкцию (функциональную единицу)
-    void add( const std::shared_ptr< Unit >& unit, Flags flags = 0 ) override;
+    void add( const std::shared_ptr< Unit >& unit) override;
 
     // геттер кода в виде std::string
     std::string compile( unsigned int level = 0 ) const override;
