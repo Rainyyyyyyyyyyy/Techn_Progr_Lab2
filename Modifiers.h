@@ -4,23 +4,43 @@
 
 #include "Unit.h"
 
+#include <type_traits>
+
 
 namespace Modifiers {
-constexpr Unit::Flags PUBLIC = 1u << 0;
-constexpr Unit::Flags PROTECTED = 1u << 1;
-constexpr Unit::Flags PRIVATE = 1u << 2;
-constexpr Unit::Flags INTERNAL = 1u << 3;
-constexpr Unit::Flags PRIVATE_PROTECTED = 1u << 4;
-constexpr Unit::Flags PROTECTED_INTERNAL = 1u << 5;
-constexpr Unit::Flags ABSTRACT = 1u << 6;
-constexpr Unit::Flags SEALED = 1u << 7;
-constexpr Unit::Flags STATIC = 1u << 8;
-constexpr Unit::Flags FINAL = 1u << 9;
-constexpr Unit::Flags VIRTUAL = 1u << 10;
-constexpr Unit::Flags OVERRIDE = 1u << 11;
-constexpr Unit::Flags CONST = 1u << 12;
-constexpr Unit::Flags PARTIAL = 1u << 13;
-}
+
+namespace Access {
+    constexpr Unit::Flags PUBLIC = 1 << 0;     ///< Публичный модификатор доступа.
+    constexpr Unit::Flags PROTECTED = 1 << 1;  ///< Защищённый модификатор доступа.
+    constexpr Unit::Flags PRIVATE = 1 << 2;    ///< Приватный модификатор доступа.
+    constexpr Unit::Flags INTERNAL = 1 << 3;              ///< Доступ из текущей сборки (C#).
+};
+
+namespace Method {
+    constexpr Unit::Flags STATIC = 1 << 4;                                    // Статический метод
+    constexpr Unit::Flags CONST = 1 << 5;                                     // Const метод
+    constexpr Unit::Flags VIRTUAL = 1 << 6;                                   // Виртуальный метод
+    constexpr Unit::Flags FINAL = 1 << 7;                                     //  Final метод в Java / C#
+    constexpr Unit::Flags ABSTRACT= 1 << 8;                                   // Abstract метод в Java / C#
+};
+
+
+
+namespace Class {
+    constexpr Unit::Flags  FINAL = 1 << 9;                                   // Final класс в Java / C#
+    constexpr Unit::Flags  ABSTRACT = 1 << 10;                                // Abstract класс в Java/C#
+    constexpr Unit::Flags  ABSTRACT_FINAL = ABSTRACT | FINAL;  // Комбинация abstract + final.
+};
+
+
+namespace Field {
+    constexpr Unit::Flags STATIC = 1 << 11;                                   // Статическое поле
+    constexpr Unit::Flags CONST = 1 << 12;                                    // Const(с++)/readonly(С#)/final поле
+};
+} // namespace Modifiers
+
+
+
 
 
 

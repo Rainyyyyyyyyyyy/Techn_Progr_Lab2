@@ -1,6 +1,7 @@
 #include "CodeGeneration.h"
 
 #include "ClassUnit.h"
+#include "FieldUnit.h"
 #include "CodeGenerationUtils.h"
 #include "MethodUnit.h"
 #include "PrintOperatorUnit.h"
@@ -14,100 +15,87 @@
 
 class CppCodeFactory : public ICodeFactory {
 public:
-    TargetLanguage language() const override
-    {
+    TargetLanguage language() const override {
         return TargetLanguage::Cpp;
     }
 
-    std::shared_ptr< Unit > createClassUnit( const std::string& name, Unit::Flags flags = 0 ) const override
-    {
+    std::shared_ptr< Unit > createClassUnit( const std::string& name, Unit::Flags flags = 0 ) const override {
         return std::make_shared< ClassUnit >( name, TargetLanguage::Cpp, flags );
     }
 
-    std::shared_ptr< Unit > createMethodUnit( const std::string& name,
-                                              const std::string& returnType,
-                                              Unit::Flags flags = 0,
-                                              const std::string& parameters = std::string() ) const override
-    {
+    std::shared_ptr< Unit > createMethodUnit( const std::string& name, const std::string& returnType, Unit::Flags flags = 0, const std::string& parameters = std::string() ) const override {
         return std::make_shared< MethodUnit >( name, returnType, TargetLanguage::Cpp, flags, parameters );
     }
 
-    std::shared_ptr< Unit > createPrintOperatorUnit( const std::string& text ) const override
-    {
+    std::shared_ptr< Unit > createFieldUnit( const std::string& name, const std::string& fieldType, Unit::Flags flags = 0, const std::string& initializer = std::string() ) const override {
+        return std::make_shared< FieldUnit >( name, fieldType, TargetLanguage::Cpp, flags, initializer );
+    }
+
+    std::shared_ptr< Unit > createPrintOperatorUnit( const std::string& text ) const override {
         return std::make_shared< PrintOperatorUnit >( text, TargetLanguage::Cpp );
     }
 
-    std::shared_ptr< Unit > createStatementUnit( const std::string& text ) const override
-    {
+    std::shared_ptr< Unit > createStatementUnit( const std::string& text ) const override {
         return std::make_shared< StatementUnit >( text );
     }
 };
 
 class CSharpCodeFactory : public ICodeFactory {
 public:
-    TargetLanguage language() const override
-    {
+    TargetLanguage language() const override {
         return TargetLanguage::CSharp;
     }
 
-    std::shared_ptr< Unit > createClassUnit( const std::string& name, Unit::Flags flags = 0 ) const override
-    {
+    std::shared_ptr< Unit > createClassUnit( const std::string& name, Unit::Flags flags = 0 ) const override {
         return std::make_shared< ClassUnit >( name, TargetLanguage::CSharp, flags );
     }
 
-    std::shared_ptr< Unit > createMethodUnit( const std::string& name,
-                                              const std::string& returnType,
-                                              Unit::Flags flags = 0,
-                                              const std::string& parameters = std::string() ) const override
-    {
+    std::shared_ptr< Unit > createMethodUnit( const std::string& name, const std::string& returnType, Unit::Flags flags = 0, const std::string& parameters = std::string() ) const override {
         return std::make_shared< MethodUnit >( name, returnType, TargetLanguage::CSharp, flags, parameters );
     }
 
-    std::shared_ptr< Unit > createPrintOperatorUnit( const std::string& text ) const override
-    {
+    std::shared_ptr< Unit > createFieldUnit( const std::string& name, const std::string& fieldType, Unit::Flags flags = 0, const std::string& initializer = std::string() ) const override {
+        return std::make_shared< FieldUnit >( name, fieldType, TargetLanguage::CSharp, flags, initializer );
+    }
+
+    std::shared_ptr< Unit > createPrintOperatorUnit( const std::string& text ) const override {
         return std::make_shared< PrintOperatorUnit >( text, TargetLanguage::CSharp );
     }
 
-    std::shared_ptr< Unit > createStatementUnit( const std::string& text ) const override
-    {
+    std::shared_ptr< Unit > createStatementUnit( const std::string& text ) const override {
         return std::make_shared< StatementUnit >( text );
     }
 };
 
 class JavaCodeFactory : public ICodeFactory {
 public:
-    TargetLanguage language() const override
-    {
+    TargetLanguage language() const override {
         return TargetLanguage::Java;
     }
 
-    std::shared_ptr< Unit > createClassUnit( const std::string& name, Unit::Flags flags = 0 ) const override
-    {
+    std::shared_ptr< Unit > createClassUnit( const std::string& name, Unit::Flags flags = 0 ) const override {
         return std::make_shared< ClassUnit >( name, TargetLanguage::Java, flags );
     }
 
-    std::shared_ptr< Unit > createMethodUnit( const std::string& name,
-                                              const std::string& returnType,
-                                              Unit::Flags flags = 0,
-                                              const std::string& parameters = std::string() ) const override
-    {
+    std::shared_ptr< Unit > createMethodUnit( const std::string& name,  const std::string& returnType, Unit::Flags flags = 0, const std::string& parameters = std::string() ) const override {
         return std::make_shared< MethodUnit >( name, returnType, TargetLanguage::Java, flags, parameters );
     }
 
-    std::shared_ptr< Unit > createPrintOperatorUnit( const std::string& text ) const override
-    {
+    std::shared_ptr< Unit > createFieldUnit( const std::string& name, const std::string& fieldType, Unit::Flags flags = 0, const std::string& initializer = std::string() ) const override {
+        return std::make_shared< FieldUnit >( name, fieldType, TargetLanguage::Java, flags, initializer );
+    }
+
+    std::shared_ptr< Unit > createPrintOperatorUnit( const std::string& text ) const override {
         return std::make_shared< PrintOperatorUnit >( text, TargetLanguage::Java );
     }
 
-    std::shared_ptr< Unit > createStatementUnit( const std::string& text ) const override
-    {
+    std::shared_ptr< Unit > createStatementUnit( const std::string& text ) const override {
         return std::make_shared< StatementUnit >( text );
     }
 };
 
 
-std::unique_ptr< ICodeFactory > createFactory( TargetLanguage language )
-{
+std::unique_ptr< ICodeFactory > createFactory( TargetLanguage language ) {
     switch( language ) {
     case TargetLanguage::Cpp:
         return std::make_unique< CppCodeFactory >();
@@ -119,8 +107,7 @@ std::unique_ptr< ICodeFactory > createFactory( TargetLanguage language )
     return std::make_unique< CppCodeFactory >();
 }
 
-TargetLanguage parseLanguage( const std::string& languageName )
-{
+TargetLanguage parseLanguage( const std::string& languageName ) {
     if( languageName == "cpp" || languageName == "c++" ) {
         return TargetLanguage::Cpp;
     }

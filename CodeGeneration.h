@@ -22,10 +22,10 @@ public:
     virtual std::shared_ptr< Unit > createClassUnit( const std::string& name, Unit::Flags flags = 0 ) const = 0;
 
     // создать фабрику метода класса
-    virtual std::shared_ptr< Unit > createMethodUnit( const std::string& name,
-                                                      const std::string& returnType,
-                                                      Unit::Flags flags = 0,
-                                                      const std::string& parameters = std::string() ) const = 0;
+    virtual std::shared_ptr< Unit > createMethodUnit( const std::string& name, const std::string& returnType, Unit::Flags flags = 0, const std::string& parameters = std::string() ) const = 0;
+
+    // создать фабрику поля класса
+    virtual std::shared_ptr< Unit > createFieldUnit( const std::string& name, const std::string& fieldType, Unit::Flags flags = 0, const std::string& initializer = std::string() ) const = 0;
 
     // создать фабрику для оператора вывода
     virtual std::shared_ptr< Unit > createPrintOperatorUnit( const std::string& text ) const = 0;

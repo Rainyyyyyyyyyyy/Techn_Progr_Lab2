@@ -4,67 +4,50 @@
 
 #include "CodeGeneration.h"
 
-
-/*
-std::string generateProgram( const IUnitFactory& factory )
-{
-    auto myClass = factory.createClassUnit( "MyClass" );
-    myClass->add(factory.createMethodUnit( "testFunc1", "void", 0 ), ClassUnit::PUBLIC);
-    myClass->add(factory.createMethodUnit( "testFunc2", "void", MethodUnit::STATIC ), ClassUnit::PRIVATE);
-    myClass->add(factory.createMethodUnit( "testFunc3", "void", MethodUnit::VIRTUAL | MethodUnit::CONST ), ClassUnit::PUBLIC);
-
-
-    auto method = factory.createMethodUnit( "testFunc4", "void", MethodUnit::STATIC );
-    method->add( factory.createPrintOperatorUnit( R"(Hello, world!\n)" ) );
-    myClass->add( method, ClassUnit::PROTECTED );
-    return myClass->compile();
-}
-
-
-*/
 #include "Modifiers.h"
 #include "TargetLanguage.h"
 
 std::string buildProgram( const ICodeFactory& factory )
 {
-    using namespace Modifiers;
-
     const TargetLanguage language = factory.language();
     const std::string className = "MyClass";
 
     Unit::Flags classFlags = 0;
-    if( language == TargetLanguage::CSharp ) { classFlags = PUBLIC | PARTIAL; }
-    else if( language == TargetLanguage::Java ) { classFlags = PUBLIC | FINAL; }
+    if( language == TargetLanguage::CSharp ) { classFlags = Modifiers::Access::PRIVATE | Modifiers::Access::PROTECTED; }
+    else if( language == TargetLanguage::Java ) { classFlags = Modifiers::Access::PUBLIC | Modifiers::Class::FINAL; }
 
     auto myClass = factory.createClassUnit( className, classFlags );
-    myClass->add(factory.createMethodUnit( "testFunc1", "void", PUBLIC ), PUBLIC);
-    myClass->add(factory.createMethodUnit( "testFunc2", "void", PRIVATE | STATIC ), PRIVATE );
 
-    Unit::Flags testFunc3Flags = PUBLIC;
-    if( language == TargetLanguage::Cpp ) { testFunc3Flags |= VIRTUAL | CONST; }
-    else if( language == TargetLanguage::CSharp ) { testFunc3Flags |= VIRTUAL; }
-    else { testFunc3Flags |= FINAL; }
+    auto field = factory.createFieldUnit("field1", "int", Modifiers::Access::PRIVATE | Modifiers::Field::STATIC | Modifiers::Field::CONST, "42" );
+    myClass->add( field );
 
-    myClass->add(factory.createMethodUnit( "testFunc3", "void", testFunc3Flags ), PUBLIC );
+    myClass->add(factory.createMethodUnit( "testFunc1", "void", Modifiers::Access::PUBLIC ));
+    myClass->add(factory.createMethodUnit( "testFunc2", "void", Modifiers::Access::PRIVATE | Modifiers::Method::STATIC ));
 
-    auto printMethod = factory.createMethodUnit( "testFunc4", "void", PUBLIC | STATIC );
+
+    Unit::Flags testFunc3Flags = Modifiers::Access::PUBLIC; // | Modifiers::Method::CONST;   // | Modifiers::Access::PRIVATE;
+    if( language == TargetLanguage::Cpp ) { testFunc3Flags |= Modifiers::Method::VIRTUAL | Modifiers::Method::CONST; }
+    else if( language == TargetLanguage::CSharp ) { testFunc3Flags |= Modifiers::Method::VIRTUAL; }
+    else { testFunc3Flags |= Modifiers::Method::FINAL; }
+
+    myClass->add(factory.createMethodUnit( "testFunc3", "void", testFunc3Flags ));
+    auto printMethod = factory.createMethodUnit( "testFunc4", "void", Modifiers::Access::PUBLIC | Modifiers::Method::STATIC );
     printMethod->add( factory.createPrintOperatorUnit( "Hello, world!\\n" ) );
-    myClass->add( printMethod, PUBLIC );
+    myClass->add( printMethod);
 
     if( language == TargetLanguage::CSharp ) {
-        auto mainMethod = factory.createMethodUnit( "Main", "void", PUBLIC | STATIC,  "string[] args" );
+        auto mainMethod = factory.createMethodUnit( "Main", "void", Modifiers::Access::PUBLIC | Modifiers::Method::STATIC,  "string[] args" );
         mainMethod->add( factory.createStatementUnit( "testFunc4();" ) );
-        myClass->add( mainMethod, PUBLIC );
+        myClass->add( mainMethod );
         return std::string( "using System;\n\n" ) + myClass->compile();
     }
 
     if( language == TargetLanguage::Java ) {
-        auto mainMethod = factory.createMethodUnit( "main", "void", PUBLIC | STATIC,  "String[] args" );
+        auto mainMethod = factory.createMethodUnit( "main", "void", Modifiers::Access::PUBLIC | Modifiers::Method::STATIC,  "String[] args" );
         mainMethod->add( factory.createStatementUnit( "testFunc4();" ) );
-        myClass->add( mainMethod, PUBLIC );
+        myClass->add( mainMethod);
         return myClass->compile();
     }
-
     std::string result = "#include <cstdio>\n\n";
     result += myClass->compile();
     result += "\nint main() {\n";
@@ -76,11 +59,10 @@ std::string buildProgram( const ICodeFactory& factory )
 
 
 
-
 int main(int argc, char *argv[])
 {
     try {
-        TargetLanguage language = TargetLanguage::Java;
+        TargetLanguage language = TargetLanguage::CSharp;
 
         const std::unique_ptr< ICodeFactory > factory = createFactory( language );
         std::cout << buildProgram( *factory ) << std::endl;
@@ -90,7 +72,5 @@ int main(int argc, char *argv[])
     }
 
 
-    //CppUnitFactory factory;
-    //std::cout << generateProgram( factory ) << std::endl;
     return 0;
 }
